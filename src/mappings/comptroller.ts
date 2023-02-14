@@ -15,6 +15,9 @@ import { mantissaFactorBD, updateCommonCTokenStats } from './helpers'
 
 export function handleMarketEntered(event: MarketEntered): void {
   let market = Market.load(event.params.cToken.toHexString())
+  if (market == null) {
+    return
+  }
   let accountID = event.params.account.toHex()
   let cTokenStats = updateCommonCTokenStats(
     market.id,
@@ -30,6 +33,9 @@ export function handleMarketEntered(event: MarketEntered): void {
 
 export function handleMarketExited(event: MarketExited): void {
   let market = Market.load(event.params.cToken.toHexString())
+  if (market == null) {
+    return
+  }
   let accountID = event.params.account.toHex()
   let cTokenStats = updateCommonCTokenStats(
     market.id,
@@ -45,12 +51,18 @@ export function handleMarketExited(event: MarketExited): void {
 
 export function handleNewCloseFactor(event: NewCloseFactor): void {
   let comptroller = Comptroller.load('1')
+  if (comptroller == null) {
+    return
+  }
   comptroller.closeFactor = event.params.newCloseFactorMantissa
   comptroller.save()
 }
 
 export function handleNewCollateralFactor(event: NewCollateralFactor): void {
   let market = Market.load(event.params.cToken.toHexString())
+  if (market == null) {
+    return
+  }
   market.collateralFactor = event.params.newCollateralFactorMantissa
     .toBigDecimal()
     .div(mantissaFactorBD)
@@ -60,12 +72,18 @@ export function handleNewCollateralFactor(event: NewCollateralFactor): void {
 // This should be the first event acccording to etherscan but it isn't.... price oracle is. weird
 export function handleNewLiquidationIncentive(event: NewLiquidationIncentive): void {
   let comptroller = Comptroller.load('1')
+  if (comptroller == null) {
+    return
+  }
   comptroller.liquidationIncentive = event.params.newLiquidationIncentiveMantissa
   comptroller.save()
 }
 
 export function handleNewMaxAssets(event: NewMaxAssets): void {
   let comptroller = Comptroller.load('1')
+  if (comptroller == null) {
+    return
+  }
   comptroller.maxAssets = event.params.newMaxAssets
   comptroller.save()
 }

@@ -4,11 +4,11 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts/index'
 import { Market, Comptroller } from '../types/schema'
 // PriceOracle is valid from Comptroller deployment until block 8498421
-import { PriceOracle } from '../types/cREP/PriceOracle'
+import { PriceOracle } from '../types/lDAI/PriceOracle'
 // PriceOracle2 is valid from 8498422 until present block (until another proxy upgrade)
-import { PriceOracle2 } from '../types/cREP/PriceOracle2'
-import { ERC20 } from '../types/cREP/ERC20'
-import { CToken } from '../types/cREP/CToken'
+import { PriceOracle2 } from '../types/lDAI/PriceOracle2'
+import { ERC20 } from '../types/lDAI/ERC20'
+import { CToken } from '../types/lDAI/CToken'
 
 import {
   exponentToBigDecimal,
@@ -30,9 +30,14 @@ function getTokenPrice(
   underlyingDecimals: i32,
 ): BigDecimal {
   let comptroller = Comptroller.load('1')
-  let oracleAddress = comptroller.priceOracle as Address
+  let oracleAddress: Address
+  if (comptroller != null) {
+    oracleAddress = comptroller.priceOracle as Address
+  }
   let underlyingPrice: BigDecimal
-  let priceOracle1Address = Address.fromString('02557a5e05defeffd4cae6d83ea3d173b272c904')
+  let priceOracle1Address = Address.fromString(
+    '0x42b0508D8DA2eb5Da4b00F2F40874b421eB8E32D',
+  )
 
   /* PriceOracle2 is used at the block the Comptroller starts using it.
    * see here https://etherscan.io/address/0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b#events
@@ -79,9 +84,14 @@ function getTokenPrice(
 // Returns the price of USDC in eth. i.e. 0.005 would mean ETH is $200
 function getUSDCpriceETH(blockNumber: i32): BigDecimal {
   let comptroller = Comptroller.load('1')
-  let oracleAddress = comptroller.priceOracle as Address
-  let priceOracle1Address = Address.fromString('02557a5e05defeffd4cae6d83ea3d173b272c904')
-  let USDCAddress = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 '
+  let oracleAddress: Address
+  if (comptroller != null) {
+    oracleAddress = comptroller.priceOracle as Address
+  }
+  let priceOracle1Address = Address.fromString(
+    '0x42b0508D8DA2eb5Da4b00F2F40874b421eB8E32D',
+  )
+  let USDCAddress = '0x6b6e2dE69838dd7f5Cc8b3f7c527Bb70F4f0Ca74'
   let usdPrice: BigDecimal
 
   // See notes on block number if statement in getTokenPrices()
