@@ -18,9 +18,9 @@ import {
   zeroBD,
 } from './helpers'
 
-let cUSDCAddress = '0x39aa39c021dfbae8fac545936693ac917d5e7563'
-let cETHAddress = '0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5'
-let daiAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+let cUSDCAddress = '0xBBc29a53A87e340d1986570Bafb6Bfa709081E6C'
+let cETHAddress = '0x11caD8E4323123E12E33C88A79D97D55cd6f91aC'
+let fraxAddress = '0xbc598315CDE125136c96dd8ECe8e4eD45deFB5bE'
 
 // Used for all cERC20 contracts
 function getTokenPrice(
@@ -124,12 +124,12 @@ export function createMarket(marketAddress: string): Market {
     market.underlyingAddress = contract.underlying()
     let underlyingContract = ERC20.bind(market.underlyingAddress as Address)
     market.underlyingDecimals = underlyingContract.decimals()
-    if (market.underlyingAddress.toHexString() != daiAddress) {
+    if (market.underlyingAddress.toHexString() != fraxAddress) {
       market.underlyingName = underlyingContract.name()
       market.underlyingSymbol = underlyingContract.symbol()
     } else {
-      market.underlyingName = 'Dai Stablecoin v1.0 (DAI)'
-      market.underlyingSymbol = 'DAI'
+      market.underlyingName = 'FRAX Stablecoin v1.0 (FRAX)'
+      market.underlyingSymbol = 'FRAX'
     }
     if (marketAddress == cUSDCAddress) {
       market.underlyingPriceUSD = BigDecimal.fromString('1')
