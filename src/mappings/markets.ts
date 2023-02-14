@@ -20,41 +20,19 @@ import {
 
 let cUSDCAddress = '0xBBc29a53A87e340d1986570Bafb6Bfa709081E6C'
 let cETHAddress = '0x11caD8E4323123E12E33C88A79D97D55cd6f91aC'
-let fraxAddress = '0xbc598315CDE125136c96dd8ECe8e4eD45deFB5bE'
 
 // Used for all cERC20 contracts
 function getTokenPrice(
-  blockNumber: i32,
+  blockNumber: BigInt,
   eventAddress: Address,
   underlyingAddress: Address,
   underlyingDecimals: i32,
 ): BigDecimal {
   let comptroller = Comptroller.load('1')
   let oracleAddress: Address
+  let underlyingPrice = zeroBD
   if (comptroller != null) {
     oracleAddress = comptroller.priceOracle as Address
-  }
-  let underlyingPrice: BigDecimal
-  let priceOracle1Address = Address.fromString(
-    '0x42b0508D8DA2eb5Da4b00F2F40874b421eB8E32D',
-  )
-
-  /* PriceOracle2 is used at the block the Comptroller starts using it.
-   * see here https://etherscan.io/address/0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b#events
-   * Search for event topic 0xd52b2b9b7e9ee655fcb95d2e5b9e0c9f69e7ef2b8e9d2d0ea78402d576d22e22,
-   * and see block 7715908.
-   *
-   * This must use the cToken address.
-   *
-   * Note this returns the value without factoring in token decimals and wei, so we must divide
-   * the number by (ethDecimals - tokenDecimals) and again by the mantissa.
-   * USDC would be 10 ^ ((18 - 6) + 18) = 10 ^ 30
-   *
-   * Note that they deployed 3 different PriceOracles at the beginning of the Comptroller,
-   * and that they handle the decimals different, which can break the subgraph. So we actually
-   * defer to Oracle 1 before block 7715908, which works,
-   * until this one is deployed, which was used for 121 days */
-  if (blockNumber > 7715908) {
     let mantissaDecimalFactor = 18 - underlyingDecimals + 18
     let bdFactor = exponentToBigDecimal(mantissaDecimalFactor)
     let oracle2 = PriceOracle2.bind(oracleAddress)
@@ -62,40 +40,17 @@ function getTokenPrice(
       .getUnderlyingPrice(eventAddress)
       .toBigDecimal()
       .div(bdFactor)
-
-    /* PriceOracle(1) is used (only for the first ~100 blocks of Comptroller. Annoying but we must
-     * handle this. We use it for more than 100 blocks, see reason at top of if statement
-     * of PriceOracle2.
-     *
-     * This must use the token address, not the cToken address.
-     *
-     * Note this returns the value already factoring in token decimals and wei, therefore
-     * we only need to divide by the mantissa, 10^18 */
-  } else {
-    let oracle1 = PriceOracle.bind(priceOracle1Address)
-    underlyingPrice = oracle1
-      .getPrice(underlyingAddress)
-      .toBigDecimal()
-      .div(mantissaFactorBD)
   }
   return underlyingPrice
 }
 
 // Returns the price of USDC in eth. i.e. 0.005 would mean ETH is $200
-function getUSDCpriceETH(blockNumber: i32): BigDecimal {
+function getUSDCpriceETH(): BigDecimal {
   let comptroller = Comptroller.load('1')
-  let oracleAddress: Address
+  let usdPrice = zeroBD
   if (comptroller != null) {
-    oracleAddress = comptroller.priceOracle as Address
-  }
-  let priceOracle1Address = Address.fromString(
-    '0x42b0508D8DA2eb5Da4b00F2F40874b421eB8E32D',
-  )
-  let USDCAddress = '0x6b6e2dE69838dd7f5Cc8b3f7c527Bb70F4f0Ca74'
-  let usdPrice: BigDecimal
+    let oracleAddress = comptroller.priceOracle as Address
 
-  // See notes on block number if statement in getTokenPrices()
-  if (blockNumber > 7715908) {
     let oracle2 = PriceOracle2.bind(oracleAddress)
     let mantissaDecimalFactorUSDC = 18 - 6 + 18
     let bdFactorUSDC = exponentToBigDecimal(mantissaDecimalFactorUSDC)
@@ -103,12 +58,7 @@ function getUSDCpriceETH(blockNumber: i32): BigDecimal {
       .getUnderlyingPrice(Address.fromString(cUSDCAddress))
       .toBigDecimal()
       .div(bdFactorUSDC)
-  } else {
-    let oracle1 = PriceOracle.bind(priceOracle1Address)
-    usdPrice = oracle1
-      .getPrice(Address.fromString(USDCAddress))
-      .toBigDecimal()
-      .div(mantissaFactorBD)
+    return usdPrice
   }
   return usdPrice
 }
@@ -134,16 +84,8 @@ export function createMarket(marketAddress: string): Market {
     market.underlyingAddress = contract.underlying()
     let underlyingContract = ERC20.bind(market.underlyingAddress as Address)
     market.underlyingDecimals = underlyingContract.decimals()
-    if (market.underlyingAddress.toHexString() != fraxAddress) {
-      market.underlyingName = underlyingContract.name()
-      market.underlyingSymbol = underlyingContract.symbol()
-    } else {
-      market.underlyingName = 'FRAX Stablecoin v1.0 (FRAX)'
-      market.underlyingSymbol = 'FRAX'
-    }
-    if (marketAddress == cUSDCAddress) {
-      market.underlyingPriceUSD = BigDecimal.fromString('1')
-    }
+    market.underlyingName = underlyingContract.name()
+    market.underlyingSymbol = underlyingContract.symbol()
   }
 
   market.borrowRate = zeroBD
