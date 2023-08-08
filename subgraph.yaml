@@ -5,10 +5,10 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: lUSDC
-    network: arbitrum-goerli
+    name: eFTM
+    network: fantom
     source:
-      address: "0xBBc29a53A87e340d1986570Bafb6Bfa709081E6C"
+      address: "0x32572d9c9291b1B7C5eAC0040af86FfBe1461082"
       abi: CToken
       startBlock: 1100000
     mapping:
@@ -49,10 +49,10 @@ dataSources:
         - event: NewMarketInterestRateModel(address,address)
           handler: handleNewMarketInterestRateModel
   - kind: ethereum/contract
-    name: lETH
-    network: arbitrum-goerli
+    name: eBTC
+    network: fantom
     source:
-      address: "0x11caD8E4323123E12E33C88A79D97D55cd6f91aC"
+      address: "0x70C566c5e71da54A8F5afc7fc598920D6f5dE206"
       abi: CToken
       startBlock: 1100000
     mapping:
@@ -93,10 +93,10 @@ dataSources:
         - event: NewMarketInterestRateModel(address,address)
           handler: handleNewMarketInterestRateModel
   - kind: ethereum/contract
-    name: lMAGIC
-    network: arbitrum-goerli
+    name: eETH
+    network: fantom
     source:
-      address: "0xbedf9898bf9ce80a24aD02aeBA43ba7A943C39EE"
+      address: "0x29b48f04732e02Ec0afEb3Ee4Ec6CdB2D8e1fF56"
       abi: CToken
       startBlock: 1100000
     mapping:
@@ -135,274 +135,10 @@ dataSources:
         - event: NewMarketInterestRateModel(address,address)
           handler: handleNewMarketInterestRateModel
   - kind: ethereum/contract
-    name: lDPX
-    network: arbitrum-goerli
+    name: eUSDC
+    network: fantom
     source:
-      address: "0x5FfA22244D8273d899B6C20CEC12A88a7Cd9E460"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lWBTC
-    network: arbitrum-goerli
-    source:
-      address: "0xc3Df2FFB5336C05aeA13B4e2A5e0d2E97909330a"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lMIM
-    network: arbitrum-goerli
-    source:
-      address: "0x315B96C352CD67E3263D9EB6574E70B09A9f321B"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lUSDT
-    network: arbitrum-goerli
-    source:
-      address: "0xB28752bA41a4714a79aAF0Bed369851c44436e81"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lplvGLP
-    network: arbitrum-goerli
-    source:
-      address: "0xF6eE884Ebd0ea58BBaC3396e41E4724C420f2B50"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lFRAX
-    network: arbitrum-goerli
-    source:
-      address: "0x25e6267C8a6f0A9b705B7dd9971196711765E0b8"
-      abi: CToken
-      startBlock: 1100000
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/mappings/ctoken.ts
-      entities:
-        - User
-        - Market
-        - CTokenInfo
-      abis:
-        - name: CToken
-          file: ./abis/ctoken.json
-        - name: PriceOracle
-          file: ./abis/priceOracle.json
-        - name: PriceOracle2
-          file: ./abis/priceOracle2.json
-        - name: ERC20
-          file: ./abis/erc20.json
-      eventHandlers:
-#        - event: Mint(address,uint256,uint256)
-#          handler: handleMint
-#        - event: Redeem(address,uint256,uint256)
-#          handler: handleRedeem
-        - event: Borrow(address,uint256,uint256,uint256)
-          handler: handleBorrow
-        - event: RepayBorrow(address,address,uint256,uint256,uint256)
-          handler: handleRepayBorrow
-        - event: LiquidateBorrow(address,address,uint256,address,uint256)
-          handler: handleLiquidateBorrow
-        - event: AccrueInterest(uint256,uint256,uint256)
-          handler: handleAccrueInterest
-        - event: NewReserveFactor(uint256,uint256)
-          handler: handleNewReserveFactor
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: NewMarketInterestRateModel(address,address)
-          handler: handleNewMarketInterestRateModel
-  - kind: ethereum/contract
-    name: lDAI
-    network: arbitrum-goerli
-    source:
-      address: "0xcC3D0d211dF6157cb94b5AaCfD55D41acd3a9A7A"
+      address: "0x745CF370167C41efb7179d8A3a819711e79437B9"
       abi: CToken
       startBlock: 1100000
     mapping:
@@ -444,9 +180,9 @@ dataSources:
           handler: handleNewMarketInterestRateModel
   - kind: ethereum/contract
     name: Comptroller
-    network: arbitrum-goerli
+    network: fantom
     source:
-      address: "0xeB156f76Ef69be485c18C297DeE5c45390345187"
+      address: "0xaeCc8D03213A2cb39153Eea18B9ab2bB1aB9182b"
       abi: Comptroller
       startBlock: 1100000
     mapping:
