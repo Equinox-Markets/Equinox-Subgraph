@@ -1,11 +1,8 @@
 /* eslint-disable prefer-const */ // to satisfy AS compiler
 
-// For each division by 10, add one to exponent to truncate one significant figure
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts/index'
 import { Market, Comptroller } from '../types/schema'
-// PriceOracle is valid from Comptroller deployment until block 8498421
 import { PriceOracle } from '../types/lDAI/PriceOracle'
-// PriceOracle2 is valid from 8498422 until present block (until another proxy upgrade)
 import { PriceOracle2 } from '../types/lDAI/PriceOracle2'
 import { ERC20 } from '../types/lDAI/ERC20'
 import { CToken } from '../types/lDAI/CToken'
@@ -18,10 +15,8 @@ import {
   zeroBD,
 } from './helpers'
 
-let cUSDCAddress = '0xBBc29a53A87e340d1986570Bafb6Bfa709081E6C'
-let cETHAddress = '0x11caD8E4323123E12E33C88A79D97D55cd6f91aC'
+let cUSDCAddress = '0x745CF370167C41efb7179d8A3a819711e79437B9'
 
-// Used for all cERC20 contracts
 function getTokenPrice(
   blockNumber: BigInt,
   eventAddress: Address,
@@ -44,7 +39,6 @@ function getTokenPrice(
   return underlyingPrice
 }
 
-// Returns the price of USDC in eth. i.e. 0.005 would mean ETH is $200
 function getUSDCpriceETH(): BigDecimal {
   let comptroller = Comptroller.load('1')
   let usdPrice = zeroBD
@@ -64,29 +58,13 @@ function getUSDCpriceETH(): BigDecimal {
 }
 
 export function createMarket(marketAddress: string): Market {
-  let market: Market
+  let market = new Market(marketAddress)
   let contract = CToken.bind(Address.fromString(marketAddress))
-
-  // It is CETH, which has a slightly different interface
-  if (marketAddress == cETHAddress) {
-    market = new Market(marketAddress)
-    market.underlyingAddress = Address.fromString(
-      '0x0000000000000000000000000000000000000000',
-    )
-    market.underlyingDecimals = 18
-    market.underlyingPrice = BigDecimal.fromString('1')
-    market.underlyingName = 'Ether'
-    market.underlyingSymbol = 'ETH'
-
-    // It is all other CERC20 contracts
-  } else {
-    market = new Market(marketAddress)
-    market.underlyingAddress = contract.underlying()
-    let underlyingContract = ERC20.bind(market.underlyingAddress as Address)
-    market.underlyingDecimals = underlyingContract.decimals()
-    market.underlyingName = underlyingContract.name()
-    market.underlyingSymbol = underlyingContract.symbol()
-  }
+  market.underlyingAddress = contract.underlying()
+  let underlyingContract = ERC20.bind(market.underlyingAddress as Address)
+  market.underlyingDecimals = underlyingContract.decimals()
+  market.underlyingName = underlyingContract.name()
+  market.underlyingSymbol = underlyingContract.symbol()
 
   market.borrowRate = zeroBD
   market.cash = zeroBD
@@ -125,31 +103,23 @@ export function updateMarket(
     market = createMarket(marketID)
   }
 
-  // Only updateMarket if it has not been updated this block
   if (market.accrualBlockNumber != blockNumber) {
     let contractAddress = Address.fromString(market.id)
     let contract = CToken.bind(contractAddress)
-    let usdPriceInEth = getUSDCpriceETH(blockNumber)
+    let usdPriceInEth = getUSDCpriceETH()
 
-    // if cETH, we only update USD price
-    if (market.id == cETHAddress) {
+    let tokenPriceEth = getTokenPrice(
+      blockNumber,
+      contractAddress,
+      market.underlyingAddress as Address,
+      market.underlyingDecimals,
+    )
+    market.underlyingPrice = tokenPriceEth.truncate(market.underlyingDecimals)
+
+    if (market.id != cUSDCAddress) {
       market.underlyingPriceUSD = market.underlyingPrice
         .div(usdPriceInEth)
         .truncate(market.underlyingDecimals)
-    } else {
-      let tokenPriceEth = getTokenPrice(
-        blockNumber,
-        contractAddress,
-        market.underlyingAddress as Address,
-        market.underlyingDecimals,
-      )
-      market.underlyingPrice = tokenPriceEth.truncate(market.underlyingDecimals)
-      // if USDC, we only update ETH price
-      if (market.id != cUSDCAddress) {
-        market.underlyingPriceUSD = market.underlyingPrice
-          .div(usdPriceInEth)
-          .truncate(market.underlyingDecimals)
-      }
     }
 
     market.accrualBlockNumber = contract.accrualBlockNumber().toI32()
